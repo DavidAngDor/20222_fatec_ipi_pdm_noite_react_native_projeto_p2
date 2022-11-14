@@ -1,7 +1,7 @@
 import { View, Text } from "react-native";
 import React from "react";
 
-export default function ClimaHistorico(cidade) {
+export default function ClimaHistorico({consulta}) {
   return (
     <View
       style={{
@@ -14,9 +14,9 @@ export default function ClimaHistorico(cidade) {
     >
       <View style={{ display: "flex", alignItems: "center", flexDirection: 'row', justifyContent: 'space-around' }}>
         <Text style={{ fontSize: 10 }}>
-          {cidade.cidade.data.getDate() + "/" + cidade.cidade.data.getMonth()}
+          {consulta.data}
         </Text>
-        <Text>{cidade.cidade.nome}</Text>
+        <Text>{consulta.cidade}</Text>
       </View>
     </View>
   );

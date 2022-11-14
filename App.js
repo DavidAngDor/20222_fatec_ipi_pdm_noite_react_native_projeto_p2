@@ -5,25 +5,15 @@ import {
   TextInput,
   StatusBar,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Tab, TabView, Button, ListItem } from "@rneui/themed";
 import Clima from "./Clima";
 import ClimaHistorico from "./ClimaHistorico";
 
 export default function App() {
-  const historicoMock = [
-    {
-      id: 1,
-      nome: "Santo André",
-      data: new Date(),
-    },
-
-    {
-      id: 2,
-      nome: "São Paulo",
-      data: new Date(),
-    },
-  ];
+  useEffect(() => {
+    getHistorico();
+  }, []);
 
   const [index, setIndex] = React.useState(0);
   const capturarTexto = (cidadeDigitada) => {
@@ -31,23 +21,58 @@ export default function App() {
   };
   const [cidade, setCidade] = useState("");
   const [cidadeEscolhida, setCidadeEscolhida] = useState(null);
-  const [historico, setHistorico] = useState(historicoMock);
+  const [historico, setHistorico] = useState([]);
+
   const getCidade = (cidade) => {
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${cidade}&appid=0a2f38e7438699b0ead786a746a9d6fb&units=metric&lang=pt`;
     fetch(url)
       .then((resposta) => resposta.json())
       .then((json) => {
-        console.log(json);
-        const temp = {
-          atual: json.main.temp,
-          max: json.main.temp_max,
-          main: json.weather[0].description,
-          min: json.main.temp_min,
+        const model = {
+          cidade: json.name,
+          temperaturaMaxima: json.main.temp_max,
+          temperaturaMinima: json.main.temp_min,
+          data: new Date(),
         };
-        setCidadeEscolhida(temp);
+        setCidadeEscolhida(model);
+        criarHistorico(model);
       })
       .catch(() => {
         Alert.alert("Erro", "Não foi possivel carregar os dados dessa cidade");
+      });
+  };
+
+  const criarHistorico = (model) => {
+    const request = {
+      cidade: model.cidade,
+      data: model.data.getDate() + "/" + model.data.getMonth(),
+      link: null, //colocar o link do icone posteriormente
+    };
+
+    const url =
+      "https://g6ca8cb0cf67636-pessoahobbiesrest.adb.sa-saopaulo-1.oraclecloudapps.com/ords/admin/bossini/";
+
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
+    }).then((data) => {
+      getHistorico();
+    });
+  };
+
+  const getHistorico = () => {
+    const url =
+      "https://g6ca8cb0cf67636-pessoahobbiesrest.adb.sa-saopaulo-1.oraclecloudapps.com/ords/admin/bossini/";
+
+    fetch(url)
+      .then((resposta) => resposta.json())
+      .then((json) => {
+        if (json.items.length > 0) {
+          setHistorico(json.items.reverse());
+        }
       });
   };
 
@@ -103,9 +128,9 @@ export default function App() {
         </TabView.Item>
         <TabView.Item style={{ width: "100%" }}>
           <ScrollView>
-            {historico.map((item, index) => (
-              <ListItem key={index} bottomDivider>
-                <ClimaHistorico cidade={item}></ClimaHistorico>
+            {historico.map((item) => (
+              <ListItem key={item.cod_prev}>
+                <ClimaHistorico consulta={item}></ClimaHistorico>
               </ListItem>
             ))}
           </ScrollView>
@@ -114,16 +139,3 @@ export default function App() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  containerList: {
-    flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
-  },
-});
