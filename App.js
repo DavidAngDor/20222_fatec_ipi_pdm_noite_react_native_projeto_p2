@@ -6,7 +6,7 @@ import {
   StatusBar,
 } from "react-native";
 import React, { useState, useEffect } from "react";
-import { Tab, TabView, Button, ListItem } from "@rneui/themed";
+import { Tab, TabView, Button, ListItem, Image } from "@rneui/themed";
 import Clima from "./Clima";
 import ClimaHistorico from "./ClimaHistorico";
 
@@ -32,6 +32,7 @@ export default function App() {
           cidade: json.name,
           temperaturaMaxima: json.main.temp_max,
           temperaturaMinima: json.main.temp_min,
+          icone: json.weather[0].icon,
           data: new Date(),
         };
         setCidadeEscolhida(model);
@@ -94,6 +95,7 @@ export default function App() {
       <TabView value={index} onChange={setIndex} animationType="spring">
         <TabView.Item style={{ width: "100%" }}>
           <ScrollView>
+            
             <TextInput
               gti
               style={{
@@ -110,6 +112,7 @@ export default function App() {
               value={cidade}
             />
             {cidadeEscolhida && <Clima cidade={cidadeEscolhida}></Clima>}
+           
             <Button
               buttonStyle={{
                 backgroundColor: "rgba(90, 154, 230, 1)",
