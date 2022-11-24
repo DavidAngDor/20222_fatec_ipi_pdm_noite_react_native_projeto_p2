@@ -46,8 +46,8 @@ export default function App() {
   const criarHistorico = (model) => {
     const request = {
       cidade: model.cidade,
-      data: model.data.getDate() + "/" + model.data.getMonth(),
-      link: null, //colocar o link do icone posteriormente
+      data: model.data.getDate() + "/" + (parseInt(model.data.getMonth()) + 1),
+      link: `http://openweathermap.org/img/wn/${model.icone}@2x.png`,
     };
 
     const url =
@@ -72,7 +72,7 @@ export default function App() {
       .then((resposta) => resposta.json())
       .then((json) => {
         if (json.items.length > 0) {
-          setHistorico(json.items.reverse());
+          setHistorico(json.items.sort((a, b) => b.cod_prev - a.cod_prev));
         }
       });
   };
@@ -95,7 +95,6 @@ export default function App() {
       <TabView value={index} onChange={setIndex} animationType="spring">
         <TabView.Item style={{ width: "100%" }}>
           <ScrollView>
-            
             <TextInput
               gti
               style={{
@@ -112,7 +111,7 @@ export default function App() {
               value={cidade}
             />
             {cidadeEscolhida && <Clima cidade={cidadeEscolhida}></Clima>}
-           
+
             <Button
               buttonStyle={{
                 backgroundColor: "rgba(90, 154, 230, 1)",
