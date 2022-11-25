@@ -1,17 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import { 
-  Button,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View 
-} from 'react-native';
-import { Tab, TabView, ListItem, Image } from "@rneui/themed";
+import { StyleSheet } from 'react-native';
+import { Tab, TabView } from "@rneui/themed";
 import Historico from './componentes/Historico';
 import SearchWeather from './componentes/SearchWeather';
 import React, { useState } from "react";
 
-// import { armazenarNoHistorico }  from './service/OracleCloudService'
+import { armazenarNoHistorico }  from './service/OracleCloudService'
 
 import * as oracleCloudService from './service/OracleCloudService'
 
@@ -31,10 +25,15 @@ export default function App() {
         <Tab.Item title="Pesquisar" titleStyle={{ fontSize: 12 }} />
         <Tab.Item title="Histórico" titleStyle={{ fontSize: 12 }} />
       </Tab>
-      {/* <Historico /> */}
-      <SearchWeather />
+      <TabView value={index} onChange={setIndex} animationType="spring">
+        <TabView.Item style={{ backgroundColor: 'ligtblue', width: '100%' }}>
+          <SearchWeather />
+        </TabView.Item>
+        <TabView.Item style={{ backgroundColor: 'red', width: '100%' }}>
+          <Historico /> 
+        </TabView.Item>
+      </TabView>
     </>
-    
   )
 }
 
