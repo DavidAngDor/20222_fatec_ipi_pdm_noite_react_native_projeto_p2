@@ -9,75 +9,42 @@ import {
 } from 'react-native'
 import React, { useState } from 'react'
 import { obterPrevisoes } from '../service/WeatherMapService'
+import { armazenarNoHistorico, obterHistorico } from '../service/OracleCloudService'
 
 
-const SearchWeather = () => {
+const SearchWeather = ({ historico }) => {
 
   const capturarTexto = (cidadeDigitada) => {
     setCidade(cidadeDigitada);
   };
   const [cidade, setCidade] = useState("");
-  const [historico, setHistorico] = useState([]);
-
   const [itens, setItens] = useState([])
-  
+  const [nomeCidade, setNomeCidade] = useState('')
+
 
   const buscar = (cidade) => {
     obterPrevisoes(cidade)
-    .then(res => {
-      cidade = res.data.city.name;
-      const model = {
-        cidade: res.data.city.name,
-        icone: res.data.list[0].weather[0].icon,
-        data: new Date(),
-      };
-      console.log(model)
-      criarHistorico(model);
-      /* cidade = res.city[0].name; */
-      console.log(res)
-      setItens(itens => {
-        console.log(res.data.list)
-        return res.data.list
+      .then(res => {
+        const data = new Date();
+        const model = {
+          cidade: res.data.city.name,
+          link: `http://openweathermap.org/img/wn/${res.data.list[0].weather[0].icon}@2x.png`,
+          data: data.getDate() + "/" + (parseInt(data.getMonth()) + 1),
+        };
+        armazenarNoHistorico(model);
+        setItens(res.data.list)
+        setNomeCidade(res.data.city.name)
+        const vai = async () => {
+          const resultado = (await obterHistorico()).data.items.sort((a, b) => b.cod_prev - a.cod_prev)
+          historico(resultado)
+        }
+        vai()
       })
-    })
-    .catch(erro => {
-      console.log('erro', erro)
-    })
+      .catch(erro => {
+        console.log('erro', erro)
+      })
   }
 
-  const criarHistorico = (model) => {
-    const request = {
-      cidade: model.cidade,
-      data: model.data.getDate() + "/" + (parseInt(model.data.getMonth()) + 1),
-      link: `http://openweathermap.org/img/wn/${model.icone}@2x.png`,
-    };
-
-    const url =
-      "https://g6ca8cb0cf67636-pessoahobbiesrest.adb.sa-saopaulo-1.oraclecloudapps.com/ords/admin/bossini/";
-
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(request),
-    }).then((data) => {
-      getHistorico();
-    });
-  };
-
-  const getHistorico = () => {
-    const url =
-      "https://g6ca8cb0cf67636-pessoahobbiesrest.adb.sa-saopaulo-1.oraclecloudapps.com/ords/admin/bossini/";
-
-    fetch(url)
-      .then((resposta) => resposta.json())
-      .then((json) => {
-        if (json.items.length > 0) {
-          setHistorico(json.items.sort((a, b) => b.cod_prev - a.cod_prev));
-        }
-      });
-  };
   return (
     <>
       <TextInput
@@ -95,17 +62,17 @@ const SearchWeather = () => {
         onChangeText={capturarTexto}
         value={cidade}
       />
-      <FlatList 
+      <FlatList
         data={itens}
         keyExtractor={item => item.dt}
         renderItem={p => (
           <View style={{ margin: 10, padding: 10, borderWidth: 1, borderRadius: 10 }}>
-            <View style={{ display: "flex", alignItems: "center" }}> 
+            <View style={{ display: "flex", alignItems: "center" }}>
               <Text style={{ fontSize: 15 }}>
-                {cidade}
+                {nomeCidade}
               </Text>
             </View>
-            <View style={{ display: "flex", alignItems: "center" }}> 
+            <View style={{ display: "flex", alignItems: "center" }}>
               <Text style={{ fontSize: 10 }}>
                 {p.item.dt_txt}
               </Text>
@@ -121,9 +88,9 @@ const SearchWeather = () => {
             >
               <View>
                 <Image
-                  style={{width: 50, height: 50}}
+                  style={{ width: 50, height: 50 }}
                   source={{
-                      uri: `http://openweathermap.org/img/wn/${p.item.weather[0].icon}.png`,
+                    uri: `http://openweathermap.org/img/wn/${p.item.weather[0].icon}.png`,
                   }}
                 />
               </View>
@@ -135,7 +102,7 @@ const SearchWeather = () => {
           </View>
         )}
       />
-      <Button 
+      <Button
         title='Buscar'
         onPress={() => buscar(cidade)}
       />

@@ -1,25 +1,21 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { ListItem } from "@rneui/themed";
 import ClimaHistorico from "./ClimaHistorico";
-import { obterHistorico } from '../service/OracleCloudService'
 
-const Historico = () => {
-  const [itens, setItens] = useState([])
+const Historico = ({ historico }) => {
   useEffect(() => {
-    const vai = async () => {
-      const resultado = (await obterHistorico()).data.items
-      setItens(resultado)
-    }
-    vai()
-  }, [])
+    setListaHistorico(historico)
+  }, [historico])
+
+  const [listaHistorico, setListaHistorico] = useState([]);
 
   return (
     <View>
       {
-        itens.map((item, index) => 
+        listaHistorico.map((item, index) =>
           <ListItem key={index} bottomDivider>
-            <ClimaHistorico consulta={item}></ClimaHistorico>          
+            <ClimaHistorico consulta={item}></ClimaHistorico>
           </ListItem>
         )
       }
