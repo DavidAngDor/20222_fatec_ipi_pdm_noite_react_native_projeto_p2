@@ -18,10 +18,11 @@ const Historico = () => {
     <View>
       {
        itens.map((item, index) => 
-       <ListItem key={index} bottomDivider>
-         <Text key={item.cod_historico}>{item.cidade}</Text>          
-       </ListItem>
-       ) 
+        <ListItem key={index} bottomDivider>
+          <Text key={item.cod_historico}>{item.cidade}</Text>          
+        </ListItem>
+        )        
+       
       }
     </View>
   )

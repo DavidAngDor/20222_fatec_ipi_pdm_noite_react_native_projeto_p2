@@ -4,7 +4,6 @@ import { Tab, TabView } from "@rneui/themed";
 import Historico from './componentes/Historico';
 import SearchWeather from './componentes/SearchWeather';
 import React, { useState } from "react";
-
 import { armazenarNoHistorico }  from './service/OracleCloudService'
 
 import * as oracleCloudService from './service/OracleCloudService'

@@ -12,7 +12,7 @@ export const obterPrevisoes = (cidade) => {
       appid:'ef0b0973b783e0614ac87612ec04344b',
       units: 'metric',
       cnt: 5,
-      lang: "pt_br"
+      lang: 'pt_br'
     }}
   )
 }
