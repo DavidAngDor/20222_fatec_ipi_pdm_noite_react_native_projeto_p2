@@ -1,84 +1,41 @@
-import { Alert, ScrollView, Text, StyleSheet, TextInput, View, Button } from 'react-native';
-import React, { useState } from 'react'
-import { Tab } from '@rneui/themed';
+import { StatusBar } from 'expo-status-bar';
+import { 
+  Button,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View 
+} from 'react-native';
+import { Tab, TabView, ListItem, Image } from "@rneui/themed";
+import Historico from './componentes/Historico';
+import SearchWeather from './componentes/SearchWeather';
+import React, { useState } from "react";
 
+// import { armazenarNoHistorico }  from './service/OracleCloudService'
+
+import * as oracleCloudService from './service/OracleCloudService'
 
 export default function App() {
   const [index, setIndex] = React.useState(0);
-  const [cidade, setCidade] = useState('');
-  const [cidadeEscolhida, setCidadeEscolhida] = useState(null);
-  const [historico, setHistorico] = useState('');
-  const capturarTexto = (cidadeDigitada) => {
-    setCidade(cidadeDigitada)
-  };
-  const adicionarCidade = () => {
-    console.log("Adicionando...", cidade)
-    setHistorico(historico => [cidade, ...historico])
-    setCidade('')
-    console.log(historico)
-  };
-  
-
-  const getCidadeData = (cidade) => {
-    /* const key = '0a2f38e7438699b0ead786a746a9d6fb'
-    const temp = 'metric'
-    const lang = 'pt' */
-    const API = `https://api.openweathermap.org/data/2.5/weather?q=${cidade}&appid=0a2f38e7438699b0ead786a746a9d6fb&units=metric&lang=pt`;
-
-    fetch(API)
-      .then(resposta => resposta.json())
-        .then(json => {
-          const temp = {
-            // icone: json.weather.icon,
-            atual: json.main.temp,
-            max: json.main.temp_max,
-            main: json.weather.main,
-            min: json.main.temp_min,
-          };
-
-          setCidadeEscolhida(temp);
-        })
-        .catch(() => {
-          Alert.alert('Erro', 'Não foi possivel carregar os dados dessa cidade');
-        });
-  };
-
- 
-  return (
-    <View style={{padding: 40}}>
-      <ScrollView>
-        <View>
-          <Tab value={index} onChange={setIndex} dense>
-            <Tab.Item>Tab</Tab.Item>
-            <Tab.Item>Tab</Tab.Item>
-          </Tab>
-          <TextInput gti
-            style={{borderBottomColor: '#CCC', borderBottomWidth: 2, padding: 12, marginBottom: 4}}
-            placeholder="Lembrar..."
-            onChangeText={capturarTexto}
-            value={cidade}
-          />
-          <Button 
-            title="OK"
-            /* onPress={adicionarCidade} */
-            onPress={()=>getCidadeData(cidade)}
-          />
-        </View>
-
-        {cidadeEscolhida != null && (
-          <View>
-            <Text>Temp: {cidadeEscolhida.atual}°C</Text>
-            <Text>Temp. Max.: {cidadeEscolhida.max}°C</Text>
-            <Text>Temp. Min.: {cidadeEscolhida.min}°C</Text>
-            <Text>Clima: {cidadeEscolhida.main}</Text>
-          </View>
-        )}
-        <View>
-
-        </View>
-      </ScrollView>
-    </View>
-  );
+  return(
+    <>
+      <Tab
+        value={index}
+        onChange={(e) => setIndex(e)}
+        indicatorStyle={{
+          backgroundColor: "white",
+          height: 3,
+        }}
+        variant="primary"
+      >
+        <Tab.Item title="Pesquisar" titleStyle={{ fontSize: 12 }} />
+        <Tab.Item title="Histórico" titleStyle={{ fontSize: 12 }} />
+      </Tab>
+      {/* <Historico /> */}
+      <SearchWeather />
+    </>
+    
+  )
 }
 
 const styles = StyleSheet.create({
@@ -89,3 +46,30 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+  // const testeOracle = () => {
+
+  //   const promise = oracleCloudService.armazenarNoHistorico({
+  //     cidade: 'Itu',
+  //     representante: 'Rodrigo Teste Oracle React Native 1'
+  //   })
+  //   // fconsole.log(promise)
+  //   promise
+  //   .then (res => {
+  //     console.log(res)
+  //   })
+  //   .catch (erro => {
+  //     console.log('erro: ', erro)
+  //   })
+
+  //   console.log("estamos livres para fazer outras coisas...")
+
+  // }
+  // return (
+  //   <View style={styles.container}>     
+  //    <Button 
+  //     title='OK'
+  //     onPress={() => testeOracle()}
+  //    />
+  //   </View>
+  // );
