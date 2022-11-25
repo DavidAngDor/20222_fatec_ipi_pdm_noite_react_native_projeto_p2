@@ -20,10 +20,30 @@ const SearchWeather = () => {
   const [historico, setHistorico] = useState([]);
 
   const [itens, setItens] = useState([])
+  const criarHistorico = (model) => {
+    const request = {
+      cidade: model.cidade,
+      data: model.data.getDate() + "/" + (parseInt(model.data.getMonth()) + 1),
+      link: `http://openweathermap.org/img/wn/${model.icone}@2x.png`,
+    };
+    const url =
+      "https://g6ca8cb0cf67636-pessoahobbiesrest.adb.sa-saopaulo-1.oraclecloudapps.com/ords/admin/bossini/";
+
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
+    }).then((data) => {
+      getHistorico();
+    });
+  }
 
   const buscar = (cidade) => {
     obterPrevisoes(cidade)
     .then(res => {
+      
       /* cidade = res.city[0].name; */
       console.log(res)
       setItens(itens => {
