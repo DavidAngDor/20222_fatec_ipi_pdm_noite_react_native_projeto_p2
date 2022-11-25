@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet } from 'react-native';
-import { Tab, TabView } from "@rneui/themed";
+import { Tab, TabView, ListItem, Image } from "@rneui/themed";
 import Historico from './componentes/Historico';
 import SearchWeather from './componentes/SearchWeather';
 import React, { useState } from "react";
