@@ -31,8 +31,16 @@ export default function App() {
         <Tab.Item title="Pesquisar" titleStyle={{ fontSize: 12 }} />
         <Tab.Item title="Histórico" titleStyle={{ fontSize: 12 }} />
       </Tab>
-      {/* <Historico /> */}
-      <SearchWeather />
+      <TabView value={index} onChange={setIndex} animationType="spring">
+        <TabView.Item style={{ backgroundColor: 'ligtblue', width: '100%' }}>
+          <SearchWeather />
+        </TabView.Item>
+        <TabView.Item style={{ backgroundColor: 'red', width: '100%' }}>
+          <Historico /> 
+        </TabView.Item>
+      </TabView>
+     
+      
     </>
     
   )
