@@ -10,22 +10,48 @@ import {
 import React, { useState } from 'react'
 import { obterPrevisoes } from '../service/WeatherMapService'
 
+
 const SearchWeather = () => {
 
   const capturarTexto = (cidadeDigitada) => {
     setCidade(cidadeDigitada);
   };
   const [cidade, setCidade] = useState("");
-  const [cidadeEscolhida, setCidadeEscolhida] = useState(null);
   const [historico, setHistorico] = useState([]);
 
   const [itens, setItens] = useState([])
+  
+
+  const buscar = (cidade) => {
+    obterPrevisoes(cidade)
+    .then(res => {
+      cidade = res.data.city.name;
+      const model = {
+        cidade: res.data.city.name,
+        icone: res.data.list[0].weather[0].icon,
+        data: new Date(),
+      };
+      console.log(model)
+      criarHistorico(model);
+      /* cidade = res.city[0].name; */
+      console.log(res)
+      setItens(itens => {
+        console.log(res.data.list)
+        return res.data.list
+      })
+    })
+    .catch(erro => {
+      console.log('erro', erro)
+    })
+  }
+
   const criarHistorico = (model) => {
     const request = {
       cidade: model.cidade,
       data: model.data.getDate() + "/" + (parseInt(model.data.getMonth()) + 1),
       link: `http://openweathermap.org/img/wn/${model.icone}@2x.png`,
     };
+
     const url =
       "https://g6ca8cb0cf67636-pessoahobbiesrest.adb.sa-saopaulo-1.oraclecloudapps.com/ords/admin/bossini/";
 
@@ -38,23 +64,20 @@ const SearchWeather = () => {
     }).then((data) => {
       getHistorico();
     });
-  }
+  };
 
-  const buscar = (cidade) => {
-    obterPrevisoes(cidade)
-    .then(res => {
-      
-      /* cidade = res.city[0].name; */
-      console.log(res)
-      setItens(itens => {
-        console.log(res.data.list)
-        return res.data.list
-      })
-    })
-    .catch(erro => {
-      console.log('erro', erro)
-    })
-  }
+  const getHistorico = () => {
+    const url =
+      "https://g6ca8cb0cf67636-pessoahobbiesrest.adb.sa-saopaulo-1.oraclecloudapps.com/ords/admin/bossini/";
+
+    fetch(url)
+      .then((resposta) => resposta.json())
+      .then((json) => {
+        if (json.items.length > 0) {
+          setHistorico(json.items.sort((a, b) => b.cod_prev - a.cod_prev));
+        }
+      });
+  };
   return (
     <>
       <TextInput
